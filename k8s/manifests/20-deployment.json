@@ -1,0 +1,54 @@
+{
+  "apiVersion": "apps/v1",
+  "kind": "Deployment",
+  "metadata": {
+    "name": "platform-agent",
+    "namespace": "platform-demo",
+    "labels": {
+      "app.kubernetes.io/name": "platform-agent",
+      "app.kubernetes.io/part-of": "platform-demo"
+    }
+  },
+  "spec": {
+    "replicas": 2,
+    "selector": {
+      "matchLabels": {
+        "app.kubernetes.io/name": "platform-agent"
+      }
+    },
+    "template": {
+      "metadata": {
+        "labels": {
+          "app.kubernetes.io/name": "platform-agent"
+        }
+      },
+      "spec": {
+        "serviceAccountName": "platform-agent",
+        "securityContext": {
+          "runAsNonRoot": true,
+          "seccompProfile": {
+            "type": "RuntimeDefault"
+          }
+        },
+        "containers": [
+          {
+            "name": "agent",
+            "image": "gcr.io/distroless/static:nonroot",
+            "args": ["-help"],
+            "securityContext": {
+              "allowPrivilegeEscalation": false,
+              "readOnlyRootFilesystem": true,
+              "capabilities": {
+                "drop": ["ALL"]
+              }
+            },
+            "resources": {
+              "requests": { "cpu": "10m", "memory": "32Mi" },
+              "limits": { "cpu": "100m", "memory": "128Mi" }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

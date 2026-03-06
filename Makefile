@@ -1,22 +1,10 @@
-.PHONY: demo up down logs backup restore check
+.PHONY: demo test clean
 
-demo: up check backup
-	@echo "Demo complete. Try: make logs"
+demo: test
+	@echo "Demo complete."
 
-up:
-	docker compose up -d --build
+test:
+	TEST_MODE=demo python3 tests/run_tests.py
 
-down:
-	docker compose down -v
-
-logs:
-	docker compose logs -f --tail=200
-
-check:
-	bash scripts/check_replication.sh
-
-backup:
-	bash scripts/backup.sh
-
-restore:
-	bash scripts/restore.sh
+clean:
+	rm -rf artifacts
